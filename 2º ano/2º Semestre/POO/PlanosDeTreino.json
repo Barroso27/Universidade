@@ -1,0 +1,22 @@
+[
+  {
+    "utilizador": "Barroso",
+    "planos": [
+      {
+        "nomePlano": "Oi",
+        "diaDaSemana": "5",
+        "plano": [
+          {
+            "distancia": 100.0,
+            "altura": 0.0,
+            "nomeAtividade": "Bicicleta na estrada",
+            "calorias": 1900,
+            "duracao": 80,
+            "tipoAtividade": "Trilha",
+            "realizada": false
+          }
+        ]
+      }
+    ]
+  }
+]

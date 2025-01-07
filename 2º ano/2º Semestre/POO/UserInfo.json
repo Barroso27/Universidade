@@ -1,0 +1,47 @@
+[
+  {
+    "senha": "sdada",
+    "UserName": "sdasda",
+    "Nome": "sdasdasd",
+    "Morada": "asdsada",
+    "Mail": "g@gmail.com",
+    "frequenciacardiaca": 32,
+    "tipodeutilizador": "Amador"
+  },
+  {
+    "senha": "sdfas",
+    "UserName": "dsdsad",
+    "Nome": "asdasdasdsad",
+    "Morada": "dsd",
+    "Mail": "2@gmail.com",
+    "frequenciacardiaca": 67,
+    "tipodeutilizador": "Amador"
+  },
+  {
+    "senha": "123456",
+    "UserName": "jose7castro",
+    "Nome": "José Pedro Mendes Castro",
+    "Morada": "Rua do Presidente ",
+    "Mail": "castrozepedro@gmail.com",
+    "frequenciacardiaca": 78,
+    "tipodeutilizador": "Amador"
+  },
+  {
+    "senha": "dyugsadbas",
+    "UserName": "dsdad",
+    "Nome": "asd",
+    "Morada": "asddsada",
+    "Mail": "v@gmail.com",
+    "frequenciacardiaca": 89,
+    "tipodeutilizador": "Amador"
+  },
+  {
+    "senha": "1223",
+    "UserName": "Barroso",
+    "Nome": "barroso",
+    "Morada": "213",
+    "Mail": "123@gmial.ocm",
+    "frequenciacardiaca": 213,
+    "tipodeutilizador": "Amador"
+  }
+]
