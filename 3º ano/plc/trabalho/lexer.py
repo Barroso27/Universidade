@@ -1,140 +1,119 @@
 import ply.lex as lex
 import sys
 
-class MyLexer(object):
-    tokens = [
-        'INTEIRO',
-        'ID',
-        'IGUAL',
-        'NUMERO',
-        'EQUIVALENTE',
-        'DIFERENTE',  
-        'ADICAO',
-        'SUBTRACAO',
-        'MULTIPLICACAO',
-        'DIVISAO',
-        'RESTO',
-        'MENOR',
-        'MAIOR',
-        'MENORIGUAL',
-        'MAIORIGUAL',
-        'ABREPARENTESES',
-        'FECHAPARENTESES',
-        'CITACAO',
-        'NOVALINHA',
-        'ASPAS'
-    ]
-    
-    RESERVED = {
-        'se': 'SE',
-        'senao': 'SENAO',
-        'enquanto': 'ENQUANTO',
-        'faca': 'FACA',
-        'imprimir': 'IMPRIMIR',
-        'entrada': 'ENTRADA',
-        'e': 'E',
-        'ou': 'OU',
-        'nao': 'NAO',
-        'definir': 'DEFINIR',
-        'retornar': 'RETORNAR',
-    }
-    
-    literais = [':']
-    
-    tokens += list(RESERVED.values())
-    
-    t_ENTRADA = r'entrada'
-    t_IMPRIMIR = r'imprimir'
-    t_ADICAO = r'\+'
-    t_SUBTRACAO = r'-'
-    t_MULTIPLICACAO = r'\*'
-    t_DIVISAO = r'/'
-    t_RESTO = r'%'
-    t_IGUAL = r'='
-    t_EQUIVALENTE = r'=='
-    t_DIFERENTE = r'!='
-    t_MENOR = r'<'
-    t_MAIOR = r'>'
-    t_MENORIGUAL = r'<='
-    t_MAIORIGUAL = r'>='
-    t_OU = r'\|\|'
-    t_E = r'\&\&'
-    t_FECHAPARENTESES = r'\)'
-    t_ABREPARENTESES = r'\('
-    t_ASPAS = r'\"'
-    
-    def t_CITACAO(self, t):
-        r'[^"\n]+'
-        # Só retorna o token se estiver entre aspas
-        if hasattr(self, 'in_string') and self.in_string:
-            return t
-        else:
-            # Se não estiver entre aspas, tenta reconhecer como outro token
-            if t.value in self.RESERVED:
-                t.type = self.RESERVED[t.value]
-                return t
-            # Verifica se é um ID
-            if t.value.isidentifier():
-                t.type = 'ID'
-                return t
-            # Verifica se é um número
-            if t.value.isdigit():
-                t.type = 'NUMERO'
-                t.value = int(t.value)
-                return t
-            
-    def t_NUMERO(self, t):
-        r'\d+'
-        t.value = int(t.value)
-        return t
+tokens = (
+    # TIPOS
+    'INTEIRO', 'NUMERO', 'ID', 'CITACAO', 'ARRAY',
 
-    def t_INTEIRO(self, t):
-        r'inteiro'  
-        return t
-    
-    def t_ID(self, t):
-        r'[a-zA-Z_][a-zA-Z0-9_]*'
-        t.type = self.RESERVED.get(t.value, 'ID')
-        return t
-    
-    def t_NOVALINHA(self, t):
-        r'\n+'
-        t.lexer.lineno += len(t.value)
-        return t
-    
-    t_ignore = ' \t\r'  
-    
-    def t_error(self, t):
-        print("Caractere ilegal:", t.value[0])
-        t.lexer.skip(1)
-        return
-    
-    def token(self):
-        try:
-            return next(self.token_stream)
-        except StopIteration:
-            return None
-    
-    def __init__(self, debug=0, optimize=0, lextab='lextab', reflags=0):
-        self.lexer = lex.lex(module=self, debug=debug, optimize=optimize, 
-                            lextab=lextab, reflags=reflags)
-        self.token_stream = None
-    
-    def entrada(self, s):
-        self.lexer.input(s)
-        self.token_stream = iter(self.lexer.token, None)
+    # OPERAÇÕES ARITMÉTICAS
+    'ADICAO', 'SUBTRACAO', 'MULTIPLICACAO', 'DIVISAO', 'RESTO', 'INCREMENTO', 'DECREMENTO',
 
-lexer = MyLexer()
+    # OPERAÇÕES RELACIONAIS
+    'IGUAL', 'EQUIVALENTE',  'MENOR', 'MAIOR', 'MENORIGUAL', 'MAIORIGUAL',
 
-# Test code
+    # PARÊNTESES E DELIMITADORES
+    'ABREPARENTESES', 'FECHAPARENTESES', 'ABREPARENTESESRET', 'FECHAPARENTESESRET', 'DOISPONTOS', 'VIRGULA', 'ABRECHAVETAS', 'FECHACHAVETAS',
 
-data = '''
-inteiro a = 10
-inteiro b = 20
-inteiro c = a + b
-entrada("Digite um numero: ")
-imprimir("O valor de c eh: ", c)
-'''
-lexer.entrada(data)
-for token in lexer.token_stream:
-    print(token)
+    # OPERAÇÕES LÓGICAS
+    'E', 'OU', 'NAO',
+
+    # OPERACÕES DE FUNÇÕES
+    'ENTRADA', 'IMPRIMIR', 'SE', 'SENAO', 'ENQUANTO', 'FAZ', 'RETORNAR', 'DEFINIR'
+)
+
+# Literais (operadores e delimitadores simples)
+literais = ['+', '-', '*', '/', '%', '=', '(', ')', ':', ',', '<', '>', '!', '[', ']', '{', '}']
+
+# Dicionário de palavras reservadas
+RESERVED = {
+    'inteiro': 'INTEIRO',
+    'entrada': 'ENTRADA',
+    'imprimir': 'IMPRIMIR',
+    'se': 'SE',
+    'senao': 'SENAO',
+    'enquanto': 'ENQUANTO',
+    'faz': 'FAZ',
+    'retornar': 'RETORNAR',
+    'definir': 'DEFINIR',
+    'array': 'ARRAY',
+    'e': 'E',
+    'ou': 'OU',
+    'nao': 'NAO'
+}
+
+############################################################################
+#                           DEFINIÇÃO DOS TOKENS                           #
+############################################################################
+
+# TIPOS
+
+def t_CITACAO(t):
+    r'"[^"\n]*"'
+    return t
+
+def t_NUMERO(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
+    t.type = RESERVED.get(t.value, 'ID')  # Se for palavra reservada, atribui o token apropriado
+    return t
+
+# OPERAÇÕES ARITMÉTICAS
+t_ADICAO = r'\+'
+t_SUBTRACAO = r'-'
+t_MULTIPLICACAO = r'\*'
+t_DIVISAO = r'/'
+t_RESTO = r'%'
+t_INCREMENTO = r'\+\+'
+t_DECREMENTO = r'--'
+
+# OPERAÇÕES RELACIONAIS
+t_IGUAL = r'='
+t_EQUIVALENTE = r'=='
+t_MENOR = r'<'
+t_MAIOR = r'>'
+t_MENORIGUAL = r'<='
+t_MAIORIGUAL = r'>='
+
+# PARÊNTESES E DELIMITADORES
+t_ABREPARENTESES = r'\('
+t_FECHAPARENTESES = r'\)'
+t_ABREPARENTESESRET = r'\['
+t_FECHAPARENTESESRET = r'\]'
+t_DOISPONTOS = r':'
+t_VIRGULA = r','
+t_ABRECHAVETAS = r'{'
+t_FECHACHAVETAS = r'}'
+
+# OPERAÇÕES LÓGICAS
+t_E = r'e'
+t_OU = r'ou'
+t_NAO = r'nao'
+
+
+t_ignore = ' \t\r'
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
+
+def t_error(t):
+    print(f"Caractere ilegal '{t.value[0]}'")
+    t.lexer.skip(1)
+
+lexer = lex.lex()
+
+try:
+    with open('tests/teste4.plc', 'r') as file:
+        input = file.read()
+        lexer.input(input)
+        tok = lexer.token()
+        while tok:
+            print(tok)
+            tok = lexer.token()
+except FileNotFoundError:
+    print("Arquivo não encontrado.")
+    sys.exit(1)

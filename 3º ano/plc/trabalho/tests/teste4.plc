@@ -1,0 +1,27 @@
+inteiro a, b, c
+inteiro x[10], y[5]
+
+a = 10
+b = 20
+c = 0
+
+x[0] = 5
+x[1] = 10
+y[0] = 1
+y[1] = 2
+y[2] = 3
+c = y[2] + y[1]
+
+se (a > b) {
+    imprimir("a é maior que b")
+}
+
+enquanto (b > 0) {
+    c = c + 1
+    b--
+}
+
+imprimir("Resultado de c: ")
+imprimir(c)
+imprimir("Primeiro valor de x: ")
+imprimir(x[0])
